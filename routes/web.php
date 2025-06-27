@@ -1,53 +1,37 @@
 <?php
 
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\PhotoController;
 use Illuminate\Auth\Events\Login;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+// Biar mulai dari catalog terus
+Route::get('/', 'PhotoController@catalog')->name('home');
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
+// Buat Guest
 Route::group(['middleware' => ['guest']], function () {
-    route::get('/', 'MenuController@login')->name('login');
+    Route::get('/login', 'MenuController@login')->name('login');
     Route::post('/ceklogin', 'MenuController@ceklogin');
-    route::get('/searchmovie', 'MenuController@searchMovie');
-    route::get('/actsearchmovie', 'MenuController@actSearchMovie');
 });
 
+// Buat Aku~
 Route::group(['middleware' => ['auth']], function () {
-    route::get('/home', 'MenuController@home');
-    route::get('/movie', 'MenuController@movie');
-    route::get('/faq', 'MenuController@faq');
-    route::get('/movie', 'MenuController@movie');
-    route::get('/movie/form-movie', 'MenuController@addmovie');
-    route::get('/kategori', 'MenuController@kategori');
-    route::get('/genre', 'MenuController@genre');
-    route::post('/save', 'MenuController@savemovie');
-    Route::get('/movie/edit-movie/{id}', 'MenuController@editmovie');
-    Route::put('/update/{id}', 'MenuController@updatemovie');
-    Route::get('/delete/{id}', 'MenuController@deletemovie');
+    Route::get('/home', 'MenuController@home');
+    Route::get('/faq', 'MenuController@faq');
     Route::get('/ubahpass', 'MenuController@ubahpass');
     Route::post('/updatepass', 'MenuController@updatepass');
     Route::get('/logout', 'MenuController@logout');
+
+    // Photo routes
+    Route::get('/photos', 'PhotoController@index')->name('photos.index');
+    Route::get('/photos/create', 'PhotoController@create')->name('photos.create');
+    Route::post('/photos', 'PhotoController@store')->name('photos.store');
+    Route::get('/photos/{photo}/edit', 'PhotoController@edit')->name('photos.edit');
+    Route::put('/photos/{photo}', 'PhotoController@update')->name('photos.update');
+    Route::delete('/photos/{photo}', 'PhotoController@destroy')->name('photos.destroy');
+
+    Route::get('/profile', 'MenuController@profile')->name('profile.show');
+    Route::post('/profile', 'MenuController@updateProfile')->name('profile.update');
 });
 
-// // Menampilkan form (GET)
-// Route::get('/kategori/form', function () {
-//     return view('kategoriForm');
-// });
-
-// // Menangani data form (POST)
-// Route::post('/kategori/form', function (Illuminate\Http\Request $request) {
-//     return redirect('/kategori/form')->with('data', $request->all());
-// });
+// Public catalog route
+Route::get('/catalog', 'PhotoController@catalog')->name('photos.catalog');
